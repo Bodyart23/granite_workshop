@@ -1,0 +1,9 @@
+{
+  "name": "granite-workshop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Гранітна майстерня Granitex — landing page",
+  "scripts": {
+    "start": "npx --yes serve ."
+  }
+}
