@@ -72,6 +72,7 @@
   const ENGRAVINGS = [
     'photo_1_2026-07-10_10-44-23.jpg',
     'photo_2_2026-07-10_10-44-23.jpg',
+    'photo_3_2026-07-10_10-44-23.jpg',
     'photo_4_2026-07-10_10-44-23.jpg',
     'photo_5_2026-07-10_10-44-23.jpg',
     'photo_6_2026-07-10_10-44-23.jpg',
@@ -124,13 +125,32 @@
     lightboxImg.classList.remove('is-dragging');
   }
 
+  let revealObserver = null;
+
   /* ---- Init ---- */
   yearEl.textContent = new Date().getFullYear();
+
+  initRevealObserver();
 
   buildGallery('monumentsGallery', 'granite_monuments', MONUMENTS, 'Пам\'ятник Granitex');
   buildGallery('complexesGallery', 'granite_complexes', COMPLEXES, 'Гранітний комплекс Granitex');
   buildGallery('doubleMonumentsGallery', 'double_monuments', DOUBLE_MONUMENTS, 'Подвійний пам\'ятник Granitex');
   buildGallery('engravingsGallery', 'additional_engravings', ENGRAVINGS, 'Додаткове гравіювання Granitex');
+
+  function initRevealObserver() {
+    revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal--visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px 0px 0px' });
+  }
+
+  function observeReveal(el) {
+    if (revealObserver) revealObserver.observe(el);
+  }
 
   /* ---- Gallery builder ---- */
   function buildGallery(containerId, folder, images, altPrefix) {
@@ -139,16 +159,16 @@
 
     images.forEach(function (filename, index) {
       const item = document.createElement('div');
-      item.className = 'gallery__item reveal' + (index === 0 ? ' gallery__item--featured' : '');
+      item.className = 'gallery__item reveal reveal--visible' + (index === 0 ? ' gallery__item--featured' : '');
       item.style.setProperty('--reveal-delay', (index * 0.05) + 's');
       item.setAttribute('role', 'button');
       item.setAttribute('tabindex', '0');
       item.setAttribute('aria-label', altPrefix + ' ' + (index + 1));
 
       const img = document.createElement('img');
-      img.src = folder + '/' + filename;
+      img.src = './' + folder + '/' + filename;
       img.alt = altPrefix + ' ' + (index + 1);
-      img.loading = index < 4 ? 'eager' : 'lazy';
+      img.loading = 'lazy';
       img.decoding = 'async';
 
       const zoom = document.createElement('span');
@@ -160,13 +180,13 @@
       item.appendChild(zoom);
 
       item.addEventListener('click', function () {
-        openLightbox(images.map(function (f) { return folder + '/' + f; }), index);
+        openLightbox(images.map(function (f) { return './' + folder + '/' + f; }), index);
       });
 
       item.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          openLightbox(images.map(function (f) { return folder + '/' + f; }), index);
+          openLightbox(images.map(function (f) { return './' + folder + '/' + f; }), index);
         }
       });
 
@@ -375,18 +395,8 @@
   }, { passive: true });
 
   /* ---- Scroll reveal ---- */
-  var revealEls = document.querySelectorAll('.reveal');
-  var revealObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('reveal--visible');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  revealEls.forEach(function (el) {
-    revealObserver.observe(el);
+  document.querySelectorAll('.reveal:not(.reveal--visible)').forEach(function (el) {
+    observeReveal(el);
   });
 
   /* ---- Contact form ---- */
