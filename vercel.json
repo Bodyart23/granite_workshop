@@ -40,6 +40,18 @@
       ]
     },
     {
+      "source": "/double_monuments/:path*",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/additional_engravings/:path*",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
       "source": "/Granitex_Logo.jpg",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }

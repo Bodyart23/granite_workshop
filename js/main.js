@@ -38,6 +38,55 @@
     'photo_10_2026-07-09_17-46-32.jpg',
     'photo_1_2026-07-09_17-48-54.jpg',
     'photo_2_2026-07-09_17-48-54.jpg',
+    'photo_1_2026-07-10_11-06-23.jpg',
+    'photo_2_2026-07-10_11-06-23.jpg',
+    'photo_3_2026-07-10_11-06-23.jpg',
+    'photo_4_2026-07-10_11-06-23.jpg',
+    'photo_5_2026-07-10_11-06-23.jpg',
+    'photo_6_2026-07-10_11-06-23.jpg',
+    'photo_7_2026-07-10_11-06-23.jpg',
+    'photo_8_2026-07-10_11-06-23.jpg',
+    'photo_9_2026-07-10_11-06-23.jpg',
+    'photo_10_2026-07-10_11-06-23.jpg',
+    'photo_11_2026-07-10_11-06-23.jpg',
+    'photo_12_2026-07-10_11-06-23.jpg',
+    'photo_13_2026-07-10_11-06-23.jpg',
+    'photo_14_2026-07-10_11-06-23.jpg',
+    'photo_15_2026-07-10_11-06-23.jpg',
+  ];
+
+  const DOUBLE_MONUMENTS = [
+    'photo_1_2026-07-10_10-46-04.jpg',
+    'photo_2_2026-07-10_10-46-04.jpg',
+    'photo_3_2026-07-10_10-46-04.jpg',
+    'photo_4_2026-07-10_10-46-04.jpg',
+    'photo_5_2026-07-10_10-46-04.jpg',
+    'photo_6_2026-07-10_10-46-04.jpg',
+    'photo_7_2026-07-10_10-46-04.jpg',
+    'photo_8_2026-07-10_10-46-04.jpg',
+    'photo_9_2026-07-10_10-46-04.jpg',
+    'photo_10_2026-07-10_10-46-04.jpg',
+    'photo_11_2026-07-10_10-46-04.jpg',
+  ];
+
+  const ENGRAVINGS = [
+    'photo_1_2026-07-10_10-44-23.jpg',
+    'photo_2_2026-07-10_10-44-23.jpg',
+    'photo_4_2026-07-10_10-44-23.jpg',
+    'photo_5_2026-07-10_10-44-23.jpg',
+    'photo_6_2026-07-10_10-44-23.jpg',
+    'photo_7_2026-07-10_10-44-23.jpg',
+    'photo_8_2026-07-10_10-44-23.jpg',
+    'photo_9_2026-07-10_10-44-23.jpg',
+    'photo_10_2026-07-10_10-44-23.jpg',
+    'photo_11_2026-07-10_10-44-23.jpg',
+    'photo_12_2026-07-10_10-44-23.jpg',
+    'photo_13_2026-07-10_10-44-23.jpg',
+    'photo_14_2026-07-10_10-44-23.jpg',
+    'photo_15_2026-07-10_10-44-23.jpg',
+    'photo_16_2026-07-10_10-44-23.jpg',
+    'photo_17_2026-07-10_10-44-23.jpg',
+    'photo_18_2026-07-10_10-44-23.jpg',
   ];
 
   /* ---- DOM refs ---- */
@@ -47,6 +96,7 @@
   const navBackdrop = document.getElementById('navBackdrop');
   const navLinks = document.querySelectorAll('.nav__link');
   const lightbox = document.getElementById('lightbox');
+  const lightboxStage = document.getElementById('lightboxStage');
   const lightboxImg = document.getElementById('lightboxImg');
   const lightboxClose = document.getElementById('lightboxClose');
   const lightboxPrev = document.getElementById('lightboxPrev');
@@ -58,12 +108,29 @@
 
   let currentGallery = [];
   let currentIndex = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchDeltaX = 0;
+  let touchDeltaY = 0;
+  let isSwiping = false;
+  let didSwipe = false;
+  let swipeAxis = null;
+  const SWIPE_THRESHOLD = 50;
+  const SWIPE_UP_THRESHOLD = 70;
+
+  function resetLightboxImageStyles() {
+    lightboxImg.style.transform = '';
+    lightboxImg.style.opacity = '';
+    lightboxImg.classList.remove('is-dragging');
+  }
 
   /* ---- Init ---- */
   yearEl.textContent = new Date().getFullYear();
 
   buildGallery('monumentsGallery', 'granite_monuments', MONUMENTS, 'Пам\'ятник Granitex');
   buildGallery('complexesGallery', 'granite_complexes', COMPLEXES, 'Гранітний комплекс Granitex');
+  buildGallery('doubleMonumentsGallery', 'double_monuments', DOUBLE_MONUMENTS, 'Подвійний пам\'ятник Granitex');
+  buildGallery('engravingsGallery', 'additional_engravings', ENGRAVINGS, 'Додаткове гравіювання Granitex');
 
   /* ---- Gallery builder ---- */
   function buildGallery(containerId, folder, images, altPrefix) {
@@ -122,27 +189,124 @@
   function closeLightbox() {
     lightbox.classList.remove('lightbox--open');
     document.body.style.overflow = '';
+    resetLightboxImageStyles();
     setTimeout(function () {
       lightbox.hidden = true;
       lightboxImg.src = '';
     }, 300);
   }
 
-  function showLightboxImage() {
+  function showLightboxImage(direction) {
+    resetLightboxImageStyles();
+
+    if (direction) {
+      lightboxImg.style.transform = 'translateX(' + (direction * 40) + 'px)';
+      lightboxImg.style.opacity = '0';
+    }
+
     lightboxImg.src = currentGallery[currentIndex];
     lightboxCounter.textContent = (currentIndex + 1) + ' / ' + currentGallery.length;
+
+    if (direction) {
+      requestAnimationFrame(function () {
+        lightboxImg.style.transform = 'translateX(0)';
+        lightboxImg.style.opacity = '1';
+      });
+    }
   }
 
   function navigateLightbox(direction) {
     currentIndex = (currentIndex + direction + currentGallery.length) % currentGallery.length;
-    showLightboxImage();
+    showLightboxImage(direction);
+  }
+
+  function onLightboxTouchStart(e) {
+    if (lightbox.hidden || e.touches.length !== 1) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchDeltaX = 0;
+    touchDeltaY = 0;
+    isSwiping = false;
+    didSwipe = false;
+    swipeAxis = null;
+    lightboxImg.classList.add('is-dragging');
+  }
+
+  function onLightboxTouchMove(e) {
+    if (lightbox.hidden || e.touches.length !== 1) return;
+
+    var deltaX = e.touches[0].clientX - touchStartX;
+    var deltaY = e.touches[0].clientY - touchStartY;
+
+    if (!swipeAxis) {
+      if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) return;
+      swipeAxis = Math.abs(deltaY) > Math.abs(deltaX) ? 'y' : 'x';
+      isSwiping = true;
+    }
+
+    e.preventDefault();
+
+    if (swipeAxis === 'x') {
+      touchDeltaX = deltaX;
+      lightboxImg.style.transform = 'translateX(' + deltaX + 'px)';
+      lightboxImg.style.opacity = String(1 - Math.min(Math.abs(deltaX) / 280, 0.4));
+      return;
+    }
+
+    touchDeltaY = deltaY;
+
+    if (deltaY < 0) {
+      lightboxImg.style.transform = 'translateY(' + deltaY + 'px)';
+      lightboxImg.style.opacity = String(1 - Math.min(Math.abs(deltaY) / 220, 0.55));
+      return;
+    }
+
+    lightboxImg.style.transform = 'translateY(' + (deltaY * 0.25) + 'px)';
+    lightboxImg.style.opacity = String(1 - Math.min(deltaY / 240, 0.2));
+  }
+
+  function onLightboxTouchEnd() {
+    if (lightbox.hidden) return;
+    lightboxImg.classList.remove('is-dragging');
+
+    if (isSwiping && swipeAxis === 'y' && touchDeltaY < -SWIPE_UP_THRESHOLD) {
+      didSwipe = true;
+      lightboxImg.style.transform = 'translateY(-140px)';
+      lightboxImg.style.opacity = '0';
+      setTimeout(closeLightbox, 180);
+      swipeAxis = null;
+      isSwiping = false;
+      return;
+    }
+
+    if (isSwiping && swipeAxis === 'x' && Math.abs(touchDeltaX) > SWIPE_THRESHOLD) {
+      didSwipe = true;
+      if (touchDeltaX < 0) navigateLightbox(1);
+      else navigateLightbox(-1);
+      swipeAxis = null;
+      isSwiping = false;
+      return;
+    }
+
+    resetLightboxImageStyles();
+    swipeAxis = null;
+    isSwiping = false;
   }
 
   lightboxClose.addEventListener('click', closeLightbox);
   lightboxPrev.addEventListener('click', function () { navigateLightbox(-1); });
   lightboxNext.addEventListener('click', function () { navigateLightbox(1); });
 
+  lightboxStage.addEventListener('touchstart', onLightboxTouchStart, { passive: true });
+  lightboxStage.addEventListener('touchmove', onLightboxTouchMove, { passive: false });
+  lightboxStage.addEventListener('touchend', onLightboxTouchEnd, { passive: true });
+  lightboxStage.addEventListener('touchcancel', onLightboxTouchEnd, { passive: true });
+
   lightbox.addEventListener('click', function (e) {
+    if (didSwipe) {
+      didSwipe = false;
+      return;
+    }
     if (e.target === lightbox) closeLightbox();
   });
 

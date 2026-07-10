@@ -28,6 +28,8 @@
         <li><a href="#about" class="nav__link">Про нас</a></li>
         <li><a href="#monuments" class="nav__link">Пам'ятники</a></li>
         <li><a href="#complexes" class="nav__link">Комплекси</a></li>
+        <li><a href="#double-monuments" class="nav__link">Подвійні</a></li>
+        <li><a href="#engravings" class="nav__link">Гравіювання</a></li>
         <li><a href="#contact" class="nav__link nav__link--cta">Контакти</a></li>
       </ul>
     </nav>
@@ -143,6 +145,32 @@
       </div>
     </section>
 
+    <!-- Double Monuments -->
+    <section class="gallery section section--dark" id="double-monuments">
+      <div class="container">
+        <div class="section__header reveal">
+          <span class="section__label">Наші роботи</span>
+          <h2 class="section__title">Подвійні пам'ятники</h2>
+          <div class="ornament ornament--center" aria-hidden="true"><span></span></div>
+          <p class="section__desc">Парні пам'ятники для подружжя та рідних — гармонійні композиції з натурального граніту</p>
+        </div>
+        <div class="gallery__grid" id="doubleMonumentsGallery"></div>
+      </div>
+    </section>
+
+    <!-- Additional Engravings -->
+    <section class="gallery section" id="engravings">
+      <div class="container">
+        <div class="section__header reveal">
+          <span class="section__label">Наші роботи</span>
+          <h2 class="section__title">Додаткові гравіювання</h2>
+          <div class="ornament ornament--center" aria-hidden="true"><span></span></div>
+          <p class="section__desc">Портрети, написи, орнаменти та інші елементи художнього оформлення на граніті</p>
+        </div>
+        <div class="gallery__grid" id="engravingsGallery"></div>
+      </div>
+    </section>
+
     <!-- Contact -->
     <section class="contact section section--dark" id="contact">
       <div class="container">
@@ -160,7 +188,7 @@
               </div>
               <div>
                 <h3>Телефон</h3>
-                <a href="tel:+380000000000">+380 (97) 002 28 68</a>
+                <a href="tel:+380970022868">+380 (97) 002 28 68</a>
               </div>
             </div>
             <div class="contact__card">
@@ -228,7 +256,10 @@
     <button class="lightbox__nav lightbox__nav--prev" id="lightboxPrev" aria-label="Попереднє зображення">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>
     </button>
-    <img class="lightbox__img" id="lightboxImg" src="" alt="">
+    <div class="lightbox__stage" id="lightboxStage">
+      <img class="lightbox__img" id="lightboxImg" src="" alt="" draggable="false">
+    </div>
+    <p class="lightbox__hint" id="lightboxHint" aria-hidden="true">Вліво/вправо — перегляд · вгору — закрити</p>
     <button class="lightbox__nav lightbox__nav--next" id="lightboxNext" aria-label="Наступне зображення">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
     </button>
