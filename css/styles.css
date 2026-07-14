@@ -409,6 +409,20 @@ ul {
   opacity: 0.92;
 }
 
+.hero__brand {
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.hero__brand em {
+  font-style: italic;
+  font-weight: 500;
+}
+
 .hero__title {
   font-family: var(--font-serif);
   font-size: clamp(2.2rem, 5.5vw, 3.8rem);
@@ -511,7 +525,7 @@ ul {
   letter-spacing: 0.2em;
 }
 
-.feature h3 {
+.feature h2 {
   font-family: var(--font-serif);
   font-size: 1.25rem;
   font-weight: 500;
@@ -907,6 +921,32 @@ ul {
   align-items: center;
   gap: 20px;
   text-align: center;
+}
+
+.footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 24px;
+}
+
+.footer__nav a {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.footer__nav a:hover {
+  color: var(--color-text);
+}
+
+.footer__seo {
+  max-width: 520px;
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  line-height: 1.6;
 }
 
 .footer__wordmark {
